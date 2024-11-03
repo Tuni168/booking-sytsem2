@@ -1,0 +1,134 @@
+using System;
+using System.Collections.Generic;
+
+namespace AppointmentBooking
+{
+    public class User
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class Appointment
+    {
+        public DateTime Date { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class InMemoryDatabase
+    {
+        public static List<User> Users = new List<User>();
+        public static List<Appointment> Appointments = new List<Appointment>();
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            while (true)
+            {
+                Console.WriteLine("1. Register");
+                Console.WriteLine("2. Login");
+                Console.WriteLine("3. Exit");
+                var choice = Console.ReadLine();
+
+                if (choice == "1")
+                {
+                    Register();
+                }
+                else if (choice == "2")
+                {
+                    Login();
+                }
+                else if (choice == "3")
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid option. Please try again.");
+                }
+            }
+        }
+
+        static void Register()
+        {
+            Console.Write("Enter email: ");
+            var email = Console.ReadLine();
+            Console.Write("Enter password: ");
+            var password = Console.ReadLine();
+
+            var user = new User { Email = email, Password = password };
+            InMemoryDatabase.Users.Add(user);
+            Console.WriteLine("User registered successfully!");
+        }
+
+        static void Login()
+        {
+            Console.Write("Enter email: ");
+            var email = Console.ReadLine();
+            Console.Write("Enter password: ");
+            var password = Console.ReadLine();
+
+            var user = InMemoryDatabase.Users.Find(u => u.Email == email && u.Password == password);
+            if (user != null)
+            {
+                Console.WriteLine("Login successful!");
+                ManageAppointments();
+            }
+            else
+            {
+                Console.WriteLine("Invalid email or password.");
+            }
+        }
+
+        static void ManageAppointments()
+        {
+            while (true)
+            {
+                Console.WriteLine("1. Book Appointment");
+                Console.WriteLine("2. View Appointments");
+                Console.WriteLine("3. Logout");
+                var choice = Console.ReadLine();
+
+                if (choice == "1")
+                {
+                    BookAppointment();
+                }
+                else if (choice == "2")
+                {
+                    ViewAppointments();
+                }
+                else if (choice == "3")
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid option. Please try again.");
+                }
+            }
+        }
+
+        static void BookAppointment()
+        {
+            Console.Write("Enter appointment date (yyyy-mm-dd): ");
+            var date = DateTime.Parse(Console.ReadLine());
+            Console.Write("Enter appointment description: ");
+            var description = Console.ReadLine();
+
+            var appointment = new Appointment { Date = date, Description = description };
+            InMemoryDatabase.Appointments.Add(appointment);
+            Console.WriteLine("Appointment booked successfully!");
+        }
+
+        static void ViewAppointments()
+        {
+            Console.WriteLine("Upcoming Appointments:");
+            foreach (var appointment in InMemoryDatabase.Appointments)
+            {
+                Console.WriteLine($"- {appointment.Date.ToShortDateString()}: {appointment.Description}");
+            }
+        }
+    }
+}
